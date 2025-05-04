@@ -17,9 +17,9 @@ except:
 
 influx = InfluxDBClient(url=url, token=token, org=org)
 write_api = influx.write_api(write_options=SYNCHRONOUS)
-app = FastAPI()
+app = FastAPI(redirect_slashes=False)
 
-@app.post("/data/report/")
+@app.post("/data/report")
 async def receive(request: Request):   
     data = json.loads(await request.body())
     points = []
