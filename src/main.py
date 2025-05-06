@@ -17,16 +17,18 @@ except:
 
 influx = InfluxDBClient(url=url, token=token, org=org)
 write_api = influx.write_api(write_options=SYNCHRONOUS)
-app = FastAPI(redirect_slashes=False)
+app = FastAPI()
 
-@app.post("/data/report")
+@app.post("/data/report/")
 async def receive(request: Request):   
-    data = json.loads(await request.body())
+    body = await request.body()
+    metrics = body.decode("utf-8").split("&")
     points = []
-    for key, value in data.items():
+    for metric in metrics:
         try:
-            floatValue = float(value)
-            point = Point("ecowitt").field(key, floatValue).time(datetime.utcnow(), WritePrecision.NS)
+            kv = metric.split("=")
+            floatValue = float(kv[1])
+            point = Point("ecowitt").field(kv[0], floatValue).time(datetime.utcnow(), WritePrecision.NS)
             points.append(point)
         except:
             None
