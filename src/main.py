@@ -8,9 +8,13 @@ import sys
 
 try:
     bucket = os.environ['INFLUX_BUCKET']
+    print("Bucket: {}".format(bucket))
     org = os.environ['INFLUX_ORG']
+    print("Org: {}".format(org))
     token = os.environ['INFLUX_TOKEN']
+    print("Token: {}".format(token))
     url = os.environ['INFLUX_URL']
+    print("Url: {}".format(url))
 except:
     print(f"Please define: INFLUX_BUCKET, INFLUX_ORG, INFLUX_TOKEN, INFLUX_URL")
     sys.exit()
@@ -20,7 +24,8 @@ write_api = influx.write_api(write_options=SYNCHRONOUS)
 app = FastAPI()
 
 @app.post("/data/report/")
-async def receive(request: Request):   
+async def receive(request: Request):
+    print("Received data")
     body = await request.body()
     metrics = body.decode("utf-8").split("&")
     points = []
